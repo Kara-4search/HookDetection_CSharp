@@ -6,6 +6,11 @@ Blog link: working on it
 - So we could avoid using the functions which already hooked，or unhook them。 
 - Only detect functions start with "Zw" or "Nt".
 - Only tested in Win10/x64 with windows defender, works fine.
+- Steps
+	1. Iterate through all the exported functions of the ntdll.dll
+	2. Read the first 4 bytes of the the syscall stub and check if they start with 4c 8b d1 b8
+		*If yes, the function is not hooked
+		*If no, the function is most likely hooked (with a couple of exceptions mentioned in the False Positives callout).
 - **Although highly effective at detecting functions hooked with inline patching, this method returns a few false positives when enumerating hooked functions inside ntdll.dll, such as:**
 **False Positives**
 ```
