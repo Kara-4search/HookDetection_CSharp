@@ -23,8 +23,18 @@ Blog link: working on it
 	ZwQuerySystemTime
 ```
 **The above functions are not hooked.**
-## README.md update later
+## Usage 
+1. Launch through a white-list application
+- With windowsdefender
+	![avatar](https://raw.githubusercontent.com/Kara-4search/tempPic/main/HookDetection_WD.png)
+- With EDR
+	![avatar](https://raw.githubusercontent.com/Kara-4search/tempPic/main/HookDetection_EDR.jpeg)
 
+
+
+## TO-DO list
+- x86 version of it.
+- Maybe check the kernel32.dll.
 
 
 ## Reference link:
