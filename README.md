@@ -3,9 +3,21 @@
 Blog link: working on it
 
 - Detecting if ntdll's funcitons got hook via iterating RVAs.
+- So we could avoid using the functions which already hooked，or unhook them。 
 - Only detect functions start with "Zw" or "Nt".
 - Only tested in Win10/x64 with windows defender, works fine.
-
+- **Although highly effective at detecting functions hooked with inline patching, this method returns a few false positives when enumerating hooked functions inside ntdll.dll, such as:**
+**False Positives**
+```
+	NtGetTickCount
+	NtQuerySystemTime
+	NtdllDefWindowProc_A
+	NtdllDefWindowProc_W
+	NtdllDialogWndProc_A
+	NtdllDialogWndProc_W
+	ZwQuerySystemTime
+```
+**The above functions are not hooked.**
 ## README.md update later
 
 
