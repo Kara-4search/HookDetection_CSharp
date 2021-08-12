@@ -1,0 +1,7 @@
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\bin\x86\Debug\HookDectection.exe.config
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\bin\x86\Debug\HookDectection.exe
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\bin\x86\Debug\HookDectection.pdb
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\obj\x86\Debug\HookDectection.csprojAssemblyReference.cache
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\obj\x86\Debug\HookDectection.csproj.CoreCompileInputs.cache
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\obj\x86\Debug\HookDectection.exe
+C:\Project\Projects\Project_HookDetecting\HookDectection\HookDectection\HookDectection\obj\x86\Debug\HookDectection.pdb
