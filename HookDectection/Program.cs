@@ -94,16 +94,14 @@ namespace HookDectection
             IMAGE_DOS_HEADER_instance = (IMAGE_DOS_HEADER)FindObjectAddress(
                 BaseAddress, 
                 IMAGE_DOS_HEADER_instance, 
-                CurrentHandle
-             );
+                CurrentHandle);
 
             IntPtr IMAGE_NT_HEADER64_address = (IntPtr)(BaseAddress.ToInt64() + (int)IMAGE_DOS_HEADER_instance.e_lfanew);
             IMAGE_NT_HEADERS64 IMAGE_NT_HEADER64_instance = new IMAGE_NT_HEADERS64();
             IMAGE_NT_HEADER64_instance = (IMAGE_NT_HEADERS64)FindObjectAddress(
                 IMAGE_NT_HEADER64_address, 
                 IMAGE_NT_HEADER64_instance, 
-                CurrentHandle
-             );
+                CurrentHandle);
 
             IMAGE_DATA_DIRECTORY IMAGE_DATA_DIRECTORY_instance = IMAGE_NT_HEADER64_instance.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
             
@@ -112,8 +110,7 @@ namespace HookDectection
             IMAGE_EXPORT_DIRECTORY_instance = (IMAGE_EXPORT_DIRECTORY)FindObjectAddress(
                 IMAGE_EXPORT_DIRECTORY_address, 
                 IMAGE_EXPORT_DIRECTORY_instance, 
-                CurrentHandle
-            );
+                CurrentHandle);
 
             // Console.WriteLine(IMAGE_EXPORT_DIRECTORY_instance.AddressOfNames);
             // Console.WriteLine(ExportDirectoryRVA_address);
