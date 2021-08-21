@@ -5,7 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-
+using static HookDectection.NativeStruct;
+using static HookDectection.NativeFunctions;
 
 namespace HookDectection
 {
@@ -42,24 +43,24 @@ namespace HookDectection
 
         private static void FindFuncitonHooked()
         {
-            IntPtr BaseAddress = NativeFunctions.LoadLibrary("ntdll");
+            IntPtr BaseAddress = LoadLibrary("ntdll");
 
             //Alloc memory for IMAGE_DOS_HEADER struct
-            NativeStruct.IMAGE_DOS_HEADER IMAGE_DOS_HEADER_instance = new NativeStruct.IMAGE_DOS_HEADER();
+            IMAGE_DOS_HEADER IMAGE_DOS_HEADER_instance = new IMAGE_DOS_HEADER();
             IntPtr IMAGE_DOS_HEADER_Address = Marshal.AllocHGlobal(Marshal.SizeOf(IMAGE_DOS_HEADER_instance));
-            NativeFunctions.RtlZeroMemory(IMAGE_DOS_HEADER_Address, Marshal.SizeOf(IMAGE_DOS_HEADER_instance));
+            RtlZeroMemory(IMAGE_DOS_HEADER_Address, Marshal.SizeOf(IMAGE_DOS_HEADER_instance));
 
             uint getsize = 0;
             bool return_status = false; 
             IntPtr CurrentHandle = Process.GetCurrentProcess().Handle;
-            return_status = NativeFunctions.NtReadVirtualMemory(
+            return_status = NtReadVirtualMemory(
                 CurrentHandle, BaseAddress, 
                 IMAGE_DOS_HEADER_Address, 
                 (uint)Marshal.SizeOf(IMAGE_DOS_HEADER_instance),
                 ref getsize
              );
 
-            IMAGE_DOS_HEADER_instance = (NativeStruct.IMAGE_DOS_HEADER)Marshal.PtrToStructure(IMAGE_DOS_HEADER_Address, typeof(NativeStruct.IMAGE_DOS_HEADER));
+            IMAGE_DOS_HEADER_instance = (IMAGE_DOS_HEADER)Marshal.PtrToStructure(IMAGE_DOS_HEADER_Address, typeof(IMAGE_DOS_HEADER));
             // Console.WriteLine((IMAGE_DOS_HEADER_instance.e_lfanew).ToString());
             // Console.WriteLine("{}", BaseAddress);
            
@@ -69,12 +70,12 @@ namespace HookDectection
         private static Object FindObjectAddress(IntPtr BaseAddress, Object StructObject, IntPtr CurrentHandle)
         {
             IntPtr ObjAllocMemAddr = Marshal.AllocHGlobal(Marshal.SizeOf(StructObject.GetType()));
-            NativeFunctions.RtlZeroMemory(ObjAllocMemAddr, Marshal.SizeOf(StructObject.GetType()));
+            RtlZeroMemory(ObjAllocMemAddr, Marshal.SizeOf(StructObject.GetType()));
 
             uint getsize = 0;
             bool return_status = false;
         
-            return_status = NativeFunctions.NtReadVirtualMemory(
+            return_status = NtReadVirtualMemory(
                 CurrentHandle, 
                 BaseAddress,
                 ObjAllocMemAddr,
@@ -89,26 +90,26 @@ namespace HookDectection
         private static Object Locate_Image_Export_Directory(IntPtr BaseAddress, IntPtr CurrentHandle)
         {
             int IMAGE_DIRECTORY_ENTRY_EXPORT = 0;             
-            NativeStruct.IMAGE_DOS_HEADER IMAGE_DOS_HEADER_instance = new NativeStruct.IMAGE_DOS_HEADER();
-            IMAGE_DOS_HEADER_instance = (NativeStruct.IMAGE_DOS_HEADER)FindObjectAddress(
+            IMAGE_DOS_HEADER IMAGE_DOS_HEADER_instance = new IMAGE_DOS_HEADER();
+            IMAGE_DOS_HEADER_instance = (IMAGE_DOS_HEADER)FindObjectAddress(
                 BaseAddress, 
                 IMAGE_DOS_HEADER_instance, 
                 CurrentHandle
              );
 
             IntPtr IMAGE_NT_HEADER64_address = (IntPtr)(BaseAddress.ToInt64() + (int)IMAGE_DOS_HEADER_instance.e_lfanew);
-            NativeStruct.IMAGE_NT_HEADERS64 IMAGE_NT_HEADER64_instance = new NativeStruct.IMAGE_NT_HEADERS64();
-            IMAGE_NT_HEADER64_instance = (NativeStruct.IMAGE_NT_HEADERS64)FindObjectAddress(
+            IMAGE_NT_HEADERS64 IMAGE_NT_HEADER64_instance = new IMAGE_NT_HEADERS64();
+            IMAGE_NT_HEADER64_instance = (IMAGE_NT_HEADERS64)FindObjectAddress(
                 IMAGE_NT_HEADER64_address, 
                 IMAGE_NT_HEADER64_instance, 
                 CurrentHandle
              );
 
-            NativeStruct.IMAGE_DATA_DIRECTORY IMAGE_DATA_DIRECTORY_instance = IMAGE_NT_HEADER64_instance.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+            IMAGE_DATA_DIRECTORY IMAGE_DATA_DIRECTORY_instance = IMAGE_NT_HEADER64_instance.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
             
             IntPtr IMAGE_EXPORT_DIRECTORY_address = (IntPtr)(BaseAddress.ToInt64() + (int)IMAGE_DATA_DIRECTORY_instance.VirtualAddress);
-            NativeStruct.IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance = new NativeStruct.IMAGE_EXPORT_DIRECTORY();
-            IMAGE_EXPORT_DIRECTORY_instance = (NativeStruct.IMAGE_EXPORT_DIRECTORY)FindObjectAddress(
+            IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance = new IMAGE_EXPORT_DIRECTORY();
+            IMAGE_EXPORT_DIRECTORY_instance = (IMAGE_EXPORT_DIRECTORY)FindObjectAddress(
                 IMAGE_EXPORT_DIRECTORY_address, 
                 IMAGE_EXPORT_DIRECTORY_instance, 
                 CurrentHandle
@@ -124,13 +125,13 @@ namespace HookDectection
 
         public static void HookDectection()
         {
-            IntPtr BaseAddress = NativeFunctions.LoadLibrary("ntdll");
+            IntPtr BaseAddress = LoadLibrary("ntdll");
             IntPtr CurrentHandle = Process.GetCurrentProcess().Handle;
             byte[] SyscallPrologue = new byte[4];
             byte[] SyscallHead = new byte[4] { 0x4c, 0x8b, 0xd1, 0xb8 };
 
-            NativeStruct.IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance = 
-                (NativeStruct.IMAGE_EXPORT_DIRECTORY)Locate_Image_Export_Directory(BaseAddress, CurrentHandle);
+            IMAGE_EXPORT_DIRECTORY IMAGE_EXPORT_DIRECTORY_instance = 
+                (IMAGE_EXPORT_DIRECTORY)Locate_Image_Export_Directory(BaseAddress, CurrentHandle);
 
             IntPtr RVA_AddressOfFunctions = (IntPtr)(BaseAddress.ToInt64() + IMAGE_EXPORT_DIRECTORY_instance.AddressOfFunctions);
             IntPtr RVA_AddressOfNameOrdinals = (IntPtr)(BaseAddress.ToInt64() + IMAGE_EXPORT_DIRECTORY_instance.AddressOfNameOrdinals);
@@ -184,10 +185,10 @@ namespace HookDectection
             /*
             UInt32 RVA_temp_address = 0;
             IntPtr RVA_temp_address_mem = Marshal.AllocHGlobal(Marshal.SizeOf(RVA_temp_address));
-            NativeFunctions.RtlZeroMemory(RVA_temp_address_mem, Marshal.SizeOf(RVA_temp_address));
+            RtlZeroMemory(RVA_temp_address_mem, Marshal.SizeOf(RVA_temp_address));
             uint getsize = 0;
 
-            NativeFunctions.NtReadVirtualMemory(
+            NtReadVirtualMemory(
                CurrentHandle,
                RVA_AddressOfNames,
                RVA_temp_address_mem,
@@ -200,7 +201,7 @@ namespace HookDectection
             /*
             for (int iterate_num = 0; iterate_num < NumberOfNames; iterate_num++)
             {
-                NativeFunctions.NtReadVirtualMemory(
+                NtReadVirtualMemory(
                    CurrentHandle,
                    RVA_AddressOfNames,
                    RVA_temp_address_mem,

@@ -36,6 +36,9 @@ Blog link: working on it
 - x86 version of it.
 - Maybe check the kernel32.dll.
 
+## Update histroy
+- Restruct code - 20210821
+
 
 ## Reference link:
 	1. https://blog.csdn.net/sankernel/article/details/104266483
