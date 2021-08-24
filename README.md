@@ -36,7 +36,7 @@ Blog link: working on it
 - x86 version of it.
 - Maybe check the kernel32.dll.
 
-## Update histroy
+## Update history
 - Restruct code - 20210821
 
 
