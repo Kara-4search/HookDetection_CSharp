@@ -37,7 +37,7 @@ Blog link: working on it
 - Maybe check the kernel32.dll.
 
 ## Update history
-- Restruct code - 20210821
+- Restructure code - 20210821
 
 
 ## Reference link:
